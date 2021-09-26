@@ -1,139 +1,196 @@
 # Parse
 
-## Project structure
+## Parse into sentences
 
-### Paragraphs
-
-Transform `.md` file into a *Birkenbihl Method* project (`.bmproj.json`).
-
-In the project file all paragraphs and all sentences in those paragraphs 
-are separated.
+First parse the text into sentences because they are at the hear of the interlinear presentation.
+Text is translated sentence by sentence.
 
 ```
-{
-  paragraphs: [
-    {
-        sentences: [
-            {
-                text: "Дядо Коледа",
-                headlinelevel: 1
-            }
-        ]
-    },
-    ...
-    {
-        sentences: [
-            {
-                text: "Пади и Пип работеха на машината за играчки."
-            },
-            {
-                text: "Пади четеше названието на играчката и името на детето."
-            },
-        ]
-    },
-  ]
-}
+# Дядо Коледа
+
+# Джудженцето Алфи
+
+Фабриката за играчки на Дядо Коледа се_намира на Северния полюс и там декември винаги е най-натоварения месец.
+
+Така беше и тази година.
+
+Дядо_Коледа непрекъснато обикаляше фабриката.
+
+Трябваше да е сигурен, че всичко е наред.
+
+Джудженцата работеха здравата.
+Всяко си имаше задача.
+
+// ...
 ```
 
-Whole paragraphs can easily be rebuild from sentences. But at the core of the Birkenbihl Method
-is the interlinear display of sentences; that's why the first step is to extract them.
+Every line a sentence. A blank line separates paragraphs.
 
-### Words
+This format can easily be checked for malformed sentences.
 
-A following step might be to "once and for all" separate the sentences into words.
-Because the interlinear text shows sentences word-by-word in the original and the translation.
+Source file `abc.md` becomes `abc.sentences.md`.
 
-```
-{
-  paragraphs: [
-    {
-        sentences: [
-            {
-                text: "Дядо Коледа",
-                headlinelevel: 1,
-                words: [ 
-                    {
-                        text: "Дядо"
-                    },
-                    {
-                        text: "Коледа"
-                    }
-                ]
-            }
-        ]
-    },
-    ...
-    {
-        sentences: [
-            {
-                text: "Пади и Пип работеха на машината за играчки.",
-                words: [
-                    {
-                        text: "Пади"
-                    },
-                    {
-                        text: "и"
-                    },
-                    {
-                        text: "Пип"
-                    },
-                    {
-                        text: "работеха"
-                    },
-                    ...
-                ]
-            },
-            ...
-        ]
-    },
-  ]
-}
-```
 
-Words of sentences contain punctuation characters.
+## Parse into words
 
-### Index
-
-Word-by-word translation should be done only for unique words. Hence a word index is
-needed. That is generated from the words of the sentences.
+Translation is done sentence by sentence in textual and verbal form. In addition a word-by-word translation is needed.
+If words in a sentence should not be separated, they can be bound to each other with a `_`.
 
 ```
-{
-    paragraphs: [
-        ...
-    ],
-    
-    wordindex: [
-        {
-            text: "Дядо"
-        },
-        {
-            text: "Коледа"
-        },
-        ...
-    ]
-}
+Дядо
+Коледа
+
+
+Джудженцето
+Алфи
+
+
+Фабриката 
+за 
+играчки
+на
+Дядо
+Коледа 
+се намира
+на
+Северния 
+полюс
+и
+там
+декември 
+винаги
+е
+най-натоварения
+месец.
+
+
+Така
+беше
+и
+тази
+година.
+
+
+Дядо_Коледа
+непрекъснато
+обикаляше 
+ABC:фабриката.
+//...
 ```
 
-Words in the index don't contain punctuation characters.
+One word each line. Sentences separated by a single blank line; two blank lines between paragraphs.
 
-A text might contain 500 paragraphs with 1500 sentences with 9000 words - 
-but only 750 unique words.
+Any punctuations characters are still attached to the words.
 
-## Solution idea
+Any `_` in a word will be replaced with a space.
 
-- Read `.md` file line by line.
-    - If line starts with `//` then skip it
-    - If line starts with `#` then
-        - close current parapraph
-        - open headline paragraph
-            - add text of line as sentence
-            - set headline level according to number of `#`
-        - close headline paragraph
-    - If line is empty
-        - close current paragraph
-    - else
-        - open a new paragraph is none is open
-        - split into sentences (detect `.?!`)
-        - if a sentence is unfinished, append first sentence and finish it.
-        - for all other sentences create a new one in the paragraph
+File `abc.sentences.md` becomes `abc.words.txt`.
+
+When rendering the text with translations it will be re-generated from this file.
+
+
+## Compile index
+
+A translation has only to be done for unique words. Hence a compilation of unique words, an index, is needed:
+
+```
+Дядо
+Коледа
+Джудженцето
+Алфи
+Фабриката 
+за 
+играчки
+на
+се намира
+Северния 
+полюс
+и
+там
+декември 
+винаги
+е
+най-натоварения
+месец
+Така
+беше
+тази
+година
+Дядо Коледа
+//...
+```
+
+One word on each line. The list is case sensitive since.
+
+The index file would be `abc.index.csv`.
+
+### Index with translations
+
+Translations can be attached to each word after a `;`.
+
+```
+Дядо;Grandpa
+Коледа;Christmas
+Джудженцето;Dwarf
+Алфи;Alfi
+Фабриката;the factory 
+за;for
+играчки;toys
+на;of
+се намира;is located
+Северния;northern
+полюс;pole
+и;and
+там;there
+декември;December
+винаги;always
+е;is
+най-натоварения;most busy
+месец;month
+Така;So
+беше;it was
+тази;this
+година;year
+Дядо Коледа;Santa Claus
+//...
+```
+
+#### Immutable translations
+
+A translation that should not be replaced in case of an automatic re-translation could be denoted with `\`.
+
+```
+//...
+Северния;\North
+//...
+```
+
+### Meta data
+
+Also a number of occurrenes could be given for eacht word, eg.
+
+```
+Дядо;Grandpa;10
+Коледа;Christmas;10
+Джудженцето;Dwarf;7
+Алфи;Alfi;4
+//...
+```
+
+And each word could be tagged to link it to a certain context:
+
+```
+фабриката==Santa Claus' factory;1;ABC
+```
+
+The tag could be applied to the words file like this: `<tag> ":" word`.
+
+### Structure of index file
+
+| Original word | Translation | Number of occurrences | Tag |
+| ------------- | ----------- | --------------------- | --- |
+| Дядо | Grandpa | 10 | |
+
+As a CSV file it can easily be opened in Excel, sorted, changed, exported.
+
+Should an original or a translation contain the delimited it can be set in `"`.
