@@ -4,6 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 .idea/
+*.secret.txt
 
 
 # User-specific files
@@ -351,3 +352,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+src/publish/DeepLTranslation/deeplauthkey.secret.txt
