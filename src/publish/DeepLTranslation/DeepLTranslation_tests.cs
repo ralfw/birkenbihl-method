@@ -23,7 +23,7 @@ namespace DeepLTranslation
         {
             var sut = new DeepLTranslator();
             var result = sut.Usage();
-            _testOutputHelper.WriteLine($"::: {result.charCount} of {result.charLimit}");
+            _testOutputHelper.WriteLine($"::: {result.charCount} ({result.charCount/result.charLimit:P}) of {result.charLimit}");
         }
         
         [Fact]
