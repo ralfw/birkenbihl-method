@@ -33,9 +33,20 @@ namespace Parse
                 yield return p.ToString();
         }
 
-        public static IEnumerable<string> ParseIntoWords(string text)
-        {
-            throw new NotImplementedException();
+        
+        public static IEnumerable<string> ParseIntoWords(string text) {
+            var w = "";
+            foreach (var c in text) {
+                if (char.IsLetter(c) || c == '-' || c == '–')
+                    w += c;
+                else {
+                    if (w.Length > 0) {
+                        yield return w;
+                        w = "";
+                    }
+                }
+            }
+            if (w.Length > 0) yield return w;
         }
     }
 }

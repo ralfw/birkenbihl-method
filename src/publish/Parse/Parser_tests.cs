@@ -106,5 +106,14 @@ namespace Parse
 2.3"
             });
         }
+
+
+
+        [Fact]
+        public void Parse_words()
+        {
+            var result = Parser.ParseIntoWords(" \"абц\"    ьзъ.\nяве-ртъ! ");
+            result.Should().BeEquivalentTo(new[] {"абц", "ьзъ", "яве-ртъ"});
+        }
     }
 }
