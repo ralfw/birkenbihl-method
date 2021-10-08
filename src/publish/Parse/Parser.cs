@@ -15,6 +15,9 @@ namespace Parse
                 var line = sr.ReadLine();
                 if (line == null) break;
 
+                if (line.Trim().StartsWith("//")) // skip comment lines
+                    continue;
+                
                 if (string.IsNullOrWhiteSpace(line)) {
                     if (p.Length > 0)
                         yield return p.ToString();
