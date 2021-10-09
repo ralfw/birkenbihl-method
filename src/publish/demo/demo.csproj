@@ -8,7 +8,20 @@
     <ItemGroup>
       <Content Include="..\..\..\assets\Приказки за Дядо Коледа.md">
         <Link>Приказки за Дядо Коледа.md</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DeepLTranslation\DeepLTranslation.csproj" />
+      <ProjectReference Include="..\Parse\Parse.csproj" />
+      <ProjectReference Include="..\PlayhtTranscription\PlayhtTranscription.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="test.md">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
