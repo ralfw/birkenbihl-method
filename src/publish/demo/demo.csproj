@@ -5,4 +5,10 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Content Include="..\..\..\assets\Приказки за Дядо Коледа.md">
+        <Link>Приказки за Дядо Коледа.md</Link>
+      </Content>
+    </ItemGroup>
+
 </Project>

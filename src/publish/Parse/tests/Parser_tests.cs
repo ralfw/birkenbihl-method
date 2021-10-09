@@ -109,6 +109,14 @@ namespace Parse
         }
 
 
+        [Fact]
+        public void Detect_headline_levels() {
+            var result = Parser.Parse("0.1\n\n# 1 \n\n##  2\n\n### 3a\n3b\n\n0.2");
+            result.Paragraphs.Select(p => p.HeadlineLevel).Should().BeEquivalentTo(new[] {0, 1, 2, 3, 0});
+            result.Paragraphs.Select(p => p.Text).Should().BeEquivalentTo(new[] {"0.1", "1 ", "2", "3a\n3b", "0.2"});
+        }
+        
+        
 
         [Fact]
         public void Parse_chunks()
@@ -118,10 +126,23 @@ namespace Parse
         }
         
         [Fact]
-        public void Parse_words()
-        {
-            var result = Parser.Parse(" \"абц\"  +123()  ьзъ.\nяве-ртъ! ");
+        public void Parse_words() {
+            var result = Parser.Parse(" \"абц\"  +123()  ьзъ.\nяве-ртъ!xyz ");
             result.Paragraphs[0].Chunks.Select(ch => ch.Word).Should().BeEquivalentTo(new[] {"абц", "", "ьзъ", "яве-ртъ"});
+        }
+        
+        [Fact]
+        public void Parse_words_with_spaces() {
+            var result = Parser.Parse("a_b");
+            result.Paragraphs[0].Chunks.Select(ch => ch.Word).Should().BeEquivalentTo(new[] {"a b"});
+        }
+
+
+
+        [Fact]
+        public void Index() {
+            var result = Parser.Parse("a d-ef +bc def bc. 123");
+            result.Index.Should().BeEquivalentTo(new[] {"a", "bc", "def", "d-ef"});
         }
     }
 }
