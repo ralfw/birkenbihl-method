@@ -1,28 +1,36 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Parse
 {
     public static class Parser
     {
-        public static IEnumerable<string> ParseIntoParagraphs(string text) {
+        public static Text Parse(string text)
+            => new Text(ParseIntoParagraphs(text).Select(p => new Text.Paragraph(p)));
+        
+        
+        private static IEnumerable<string> ParseIntoParagraphs(string text) {
             var sr = new StringReader(text);
             var p = new StringBuilder();
             do {
                 var line = sr.ReadLine();
                 if (line == null) break;
 
-                if (line.Trim().StartsWith("//")) // skip comment lines
+                // skip comment lines
+                if (line.Trim().StartsWith("//"))
                     continue;
                 
+                // detect end-of-paragraph
                 if (string.IsNullOrWhiteSpace(line)) {
                     if (p.Length > 0)
                         yield return p.ToString();
                     p.Clear();
                 }
+                // append line to paragraph
                 else {
                     if (p.Length > 0)
                         p.AppendLine("");
@@ -31,22 +39,6 @@ namespace Parse
             } while (true);
             if (p.Length > 0)
                 yield return p.ToString();
-        }
-
-        
-        public static IEnumerable<string> ParseIntoWords(string text) {
-            var w = "";
-            foreach (var c in text) {
-                if (char.IsLetter(c) || c == '-' || c == '–')
-                    w += c;
-                else {
-                    if (w.Length > 0) {
-                        yield return w;
-                        w = "";
-                    }
-                }
-            }
-            if (w.Length > 0) yield return w;
         }
     }
 }
