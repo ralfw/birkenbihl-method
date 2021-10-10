@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using DeepLTranslation;
+using GoogleTranslation;
 using Parse;
 using PlayhtTranscription;
 
@@ -14,7 +17,7 @@ namespace demo
         static void Main(string[] args)
         {
             // Приказки за Дядо Коледа.md
-            var birkenbihl = new BirkenbihlMethod(new DeepLTranslator(), null);
+            var birkenbihl = new BirkenbihlMethod(new DeepLTranslator(), new GoogleTranslator(), new PlayhtTranscriber());
             birkenbihl.Compile("test.md", "./test");
         }
     }
@@ -22,10 +25,15 @@ namespace demo
 
     public class BirkenbihlMethod
     {
-        private readonly DeepLTranslator _translator;
+        private readonly DeepLTranslator _paragraphTranslator;
+        private readonly GoogleTranslator _wordTranslator;
+        private readonly PlayhtTranscriber _transcriber;
 
-        public BirkenbihlMethod(DeepLTranslator translator, PlayhtTranscriber transcriber) {
-            _translator = translator;
+        public BirkenbihlMethod(DeepLTranslator paragraphTranslator, GoogleTranslator wordTranslator, PlayhtTranscriber transcriber)
+        {
+            _paragraphTranslator = paragraphTranslator;
+            _wordTranslator = wordTranslator;
+            _transcriber = transcriber;
         }
 
 
@@ -49,20 +57,35 @@ namespace demo
             var paragraphTranslations = new List<string>();
             foreach (var paragraph in text.Paragraphs) {
                 Console.WriteLine($"    {paragraph.Text.Substring(0, Math.Min(10, paragraph.Text.Length))}...");
-                var translation = _translator.Translate(paragraph.Text);
+                var translation = _paragraphTranslator.Translate(paragraph.Text);
                 paragraphTranslations.Add(translation);
             }
             
-            // translate index (could be chunked with 50 words at a time)
+            // translate index (DeepL: could be chunked with 50 words at a time)
             Console.WriteLine($"Translating index of {text.Index.Length} words...");
             var dictionary = new Dictionary<string, string>();
             foreach (var word in text.Index) {
                 Console.Write(".");
-                var translation = _translator.Translate(word);
+                var translation = _wordTranslator.Translate(word);
                 dictionary.Add(word, translation);
             }
             Console.WriteLine();
+            
+            // transcribe paragraphs
+            Console.WriteLine("Transcribing...");
+            for(var p=0; p < text.Paragraphs.Length; p++)
+            {
+                var txid = _transcriber.Convert(text.Paragraphs[p].Text);
+                var tsc = _transcriber.WaitForTranscription(txid);
 
+                var mp3Filename = Path.Combine(targetFolderpath, $"p{p:000}.mp3");
+                if (File.Exists(mp3Filename)) File.Delete(mp3Filename);
+                new WebClient().DownloadFile(tsc.url, mp3Filename);
+                Console.Write(".");
+            }
+            Console.WriteLine();
+
+            // color names: https://htmlcolorcodes.com/
             Console.WriteLine("Rendering html...");
             var html = new StringBuilder();
             html.AppendLine("<html><body>");
@@ -71,10 +94,13 @@ namespace demo
                 // original
                 var paragraph = text.Paragraphs[i];
                 string[] FONT_SIZES = new[] {"100%", "200%", "160%", "130%", "110%", "110%", "110%", "110%", "110%"};
-                html.AppendLine($"<div style=\"background-color:PapayaWhip;font-size:{FONT_SIZES[paragraph.HeadlineLevel]}\">{paragraph.Text}</div>");
+                html.AppendLine($"<div style=\"background-color:PapayaWhip;font-size:{FONT_SIZES[paragraph.HeadlineLevel]}\">{paragraph.Text}&nbsp<span style='cursor:alias' onclick=\"toggle('audio{i:000}')\">🔈</span></div>");
+                // audio player
+                html.AppendLine($"<audio controls id='audio{i:000}' style='display:none'><source src='p{i:000}.mp3'/></audio>");
                 // translated
-                // color names: https://htmlcolorcodes.com/
                 html.AppendLine($"<div style=\"color:gray;background-color:PapayaWhip;\">{paragraphTranslations[i]}</div>");
+
+                
                 
                 // word by word interlinear paragraph
                 // monospaced font drumherum wickeln
@@ -134,6 +160,19 @@ namespace demo
 
                 }
             }
+
+            // Documentation: https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp
+            html.AppendLine(@"
+<script>
+function toggle(elementName) {
+    var x = document.getElementById(elementName);
+    if (x.style.display === 'none') {
+        x.style.display = 'block';
+    } else {
+        x.style.display = 'none';
+    }
+}
+</script>");
             html.AppendLine("</body></html>");
             File.WriteAllText(Path.Combine(targetFolderpath, "text.html"), html.ToString());
             Console.WriteLine("Done!");
