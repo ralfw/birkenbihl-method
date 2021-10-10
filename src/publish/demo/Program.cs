@@ -91,7 +91,7 @@ namespace demo
                     translation = dictionary[ch.Word]
                 }).ToArray();
 
-                html.AppendLine("<p style=\"font-family:courier;font-size:80%\">");
+                html.AppendLine("<table>");
                 const int MAX_LINE_LEN = 80;
                 var j = 0;
                 var originalLineChunks = new List<string>();
@@ -111,7 +111,7 @@ namespace demo
                     }
                 }
                 RenderInterlinear();
-                html.AppendLine("</p>");
+                html.AppendLine("</table>");
 
                 
                 bool FitsInLine(List<string> line, string word, int maxLineLen)
@@ -120,19 +120,17 @@ namespace demo
                 void RenderInterlinear() {
                     if (originalLineChunks.Count() == 0) return;
                     
-                    var originalLine = "";
-                    var translatedLine = "";
+                    var originalLine = "<tr>";
+                    var translatedLine = "<tr>";
                     for (var k = 0; k < originalLineChunks.Count(); k++) {
-                        var width = Math.Max(originalLineChunks[k].Length, translatedLineWords[k].Length);
-                        if (originalLine.Length > 0) {
-                            originalLine += " ";
-                            translatedLine += " ";
-                        }
-                        originalLine += originalLineChunks[k].PadRight(width);
-                        translatedLine += translatedLineWords[k].PadRight(width);
+                        originalLine += $"<td>{originalLineChunks[k]}</td>";
+                        translatedLine += $"<td>{translatedLineWords[k]}</td>";
                     }
-                    html.AppendLine($"<span>{originalLine}</span><br/>");
-                    html.AppendLine($"<span>{translatedLine}</span><br/>");
+                    originalLine += "</tr>";
+                    translatedLine += "</tr>";
+                    
+                    html.AppendLine(originalLine);
+                    html.AppendLine(translatedLine);
                 }
             }
             html.AppendLine("</body></html>");
