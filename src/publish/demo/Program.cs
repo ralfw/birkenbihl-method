@@ -70,15 +70,11 @@ namespace demo
                 // paragraph
                 // original
                 var paragraph = text.Paragraphs[i];
-                if (paragraph.HeadlineLevel > 0) {
-                    html.AppendLine($"<h{paragraph.HeadlineLevel}>{paragraph.Text}</h{paragraph.HeadlineLevel}>");
-                }
-                else {
-                    html.AppendLine($"<p>{paragraph.Text}</p>");
-                }
+                string[] FONT_SIZES = new[] {"100%", "200%", "160%", "130%", "110%", "110%", "110%", "110%", "110%"};
+                html.AppendLine($"<div style=\"background-color:PapayaWhip;font-size:{FONT_SIZES[paragraph.HeadlineLevel]}\">{paragraph.Text}</div>");
                 // translated
-                // color names: https://www.w3schools.com/tags/ref_colornames.asp
-                html.AppendLine($"<p style=\"color:gray;\">{paragraphTranslations[i]}</p>");
+                // color names: https://htmlcolorcodes.com/
+                html.AppendLine($"<div style=\"color:gray;background-color:PapayaWhip;\">{paragraphTranslations[i]}</div>");
                 
                 // word by word interlinear paragraph
                 // monospaced font drumherum wickeln
@@ -91,6 +87,7 @@ namespace demo
                     translation = dictionary[ch.Word]
                 }).ToArray();
 
+                html.AppendLine("<table style=\"border:1px gray;border-collapse:collapse;border-style:dotted\">");
                 const int MAX_LINE_LEN = 80;
                 var j = 0;
                 var originalLineChunks = new List<string>();
@@ -110,6 +107,7 @@ namespace demo
                     }
                 }
                 RenderInterlinear();
+                html.AppendLine("</table>");
 
                 
                 bool FitsInLine(List<string> line, string word, int maxLineLen)
@@ -118,10 +116,10 @@ namespace demo
                 void RenderInterlinear() {
                     if (originalLineChunks.Count() == 0) return;
                     
-                    html.AppendLine("<table>");
+                    html.AppendLine("<tr><td><table>");
 
-                    var originalLine = "<tr>";
-                    var translatedLine = "<tr style=\"color:gray;\">";
+                    var originalLine = "<tr style=\"background-color:#9FE2BF;\">";
+                    var translatedLine = "<tr style=\"color:gray;background-color:LightYellow;\">";
                     for (var k = 0; k < originalLineChunks.Count(); k++) {
                         originalLine += $"<td>{originalLineChunks[k]}</td>";
                         translatedLine += $"<td>{translatedLineWords[k]}</td>";
@@ -132,7 +130,7 @@ namespace demo
                     html.AppendLine(originalLine);
                     html.AppendLine(translatedLine);
                     
-                    html.AppendLine("</table>");
+                    html.AppendLine("</td></tr></table>");
 
                 }
             }
