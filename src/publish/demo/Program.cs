@@ -91,7 +91,6 @@ namespace demo
                     translation = dictionary[ch.Word]
                 }).ToArray();
 
-                html.AppendLine("<table>");
                 const int MAX_LINE_LEN = 80;
                 var j = 0;
                 var originalLineChunks = new List<string>();
@@ -111,7 +110,6 @@ namespace demo
                     }
                 }
                 RenderInterlinear();
-                html.AppendLine("</table>");
 
                 
                 bool FitsInLine(List<string> line, string word, int maxLineLen)
@@ -120,8 +118,10 @@ namespace demo
                 void RenderInterlinear() {
                     if (originalLineChunks.Count() == 0) return;
                     
+                    html.AppendLine("<table>");
+
                     var originalLine = "<tr>";
-                    var translatedLine = "<tr>";
+                    var translatedLine = "<tr style=\"color:gray;\">";
                     for (var k = 0; k < originalLineChunks.Count(); k++) {
                         originalLine += $"<td>{originalLineChunks[k]}</td>";
                         translatedLine += $"<td>{translatedLineWords[k]}</td>";
@@ -131,6 +131,9 @@ namespace demo
                     
                     html.AppendLine(originalLine);
                     html.AppendLine(translatedLine);
+                    
+                    html.AppendLine("</table>");
+
                 }
             }
             html.AppendLine("</body></html>");
