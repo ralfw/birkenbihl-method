@@ -94,7 +94,7 @@ namespace demo
                 // original
                 var paragraph = text.Paragraphs[i];
                 string[] FONT_SIZES = new[] {"100%", "200%", "160%", "130%", "110%", "110%", "110%", "110%", "110%"};
-                html.AppendLine($"<div style=\"background-color:PapayaWhip;font-size:{FONT_SIZES[paragraph.HeadlineLevel]}\">{paragraph.Text}&nbsp<span style='cursor:alias' onclick=\"toggle('audio{i:000}')\">🔈</span></div>");
+                html.AppendLine($"<div style=\"background-color:PapayaWhip;font-size:{FONT_SIZES[paragraph.HeadlineLevel]}\">{paragraph.Text}&nbsp🔈<span id='play{i:000}' style='cursor:pointer' onclick=\"toggle('{i:000}')\">▶️</span></div>");
                 // audio player
                 html.AppendLine($"<audio controls id='audio{i:000}' style='display:none'><source src='p{i:000}.mp3'/></audio>");
                 // translated
@@ -164,12 +164,20 @@ namespace demo
             // Documentation: https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp
             html.AppendLine(@"
 <script>
-function toggle(elementName) {
-    var x = document.getElementById(elementName);
-    if (x.style.display === 'none') {
-        x.style.display = 'block';
+function toggle(soundnumber) {
+    var audio = document.getElementById('audio'+soundnumber);
+    var btn = document.getElementById('play'+soundnumber);
+
+    var isPlaying = btn.innerText == '⏹';
+    if (isPlaying) {
+        audio.stop();
+        btn.innerText = '▶️';
     } else {
-        x.style.display = 'none';
+        btn.innerText = '⏹';
+        audio.onended = function() {
+            btn.innerText = '▶️';
+        };
+        audio.play();
     }
 }
 </script>");
