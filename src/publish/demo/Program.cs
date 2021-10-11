@@ -110,7 +110,7 @@ namespace demo
                 // translation: translation from index for word from chunk
                 var pairs = paragraph.Chunks.Select(ch => new {
                     chunk = ch.Text,
-                    translation = dictionary[ch.Word]
+                    translation = string.IsNullOrWhiteSpace(ch.Word) ? ch.Text : dictionary[ch.Word]
                 }).ToArray();
 
                 html.AppendLine("<table style=\"border:1px gray;border-collapse:collapse;border-style:dotted\">");
@@ -183,7 +183,7 @@ function toggle(soundnumber) {
 }
 </script>");
             html.AppendLine("</body></html>");
-            File.WriteAllText(Path.Combine(targetFolderpath, "text.html"), html.ToString());
+            File.WriteAllText(Path.Combine(targetFolderpath, "index.html"), html.ToString());
             Console.WriteLine("Done!");
         }
     }

@@ -6,9 +6,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Content Include="..\..\..\assets\Bulgarian for Refugees - Lesson 10.txt">
+        <Link>Bulgarian for Refugees - Lesson 10.txt</Link>
+      </Content>
       <Content Include="..\..\..\assets\Приказки за Дядо Коледа.md">
         <Link>Приказки за Дядо Коледа.md</Link>
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\..\assets\Спускане в Маелстрьом - A Descent into the Maelström - Edgar Allan Poe.txt">
+        <Link>Спускане в Маелстрьом - A Descent into the Maelström - Edgar Allan Poe.txt</Link>
       </Content>
     </ItemGroup>
 
