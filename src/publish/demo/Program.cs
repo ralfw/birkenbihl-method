@@ -170,7 +170,8 @@ function toggle(soundnumber) {
 
     var isPlaying = btn.innerText == '⏹';
     if (isPlaying) {
-        audio.stop();
+        audio.pause();
+        audio.currentTime = 0; // stops by rewinding the audio
         btn.innerText = '▶️';
     } else {
         btn.innerText = '⏹';
