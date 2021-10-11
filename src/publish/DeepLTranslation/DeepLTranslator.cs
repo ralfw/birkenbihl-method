@@ -37,17 +37,16 @@ namespace DeepLTranslation
         private record Translation(string detected_source_language, string text) {}
         private record TranslationResponse(Translation[] translations) { }
 
-        public string Translate(string original) => Translate(new[] {original})[0];
+        public string Translate(string original, string sourceLanguage, string targetLanguage) 
+            => Translate(new[] {original}, sourceLanguage, targetLanguage)[0];
         
-        public string[] Translate(IEnumerable<string> originals)
+        // languages: BG, FR, EN-US
+        public string[] Translate(IEnumerable<string> originals, string sourceLanguage, string targetLanguage)
         {
-            const string SOURCE_LANG = "BG";
-            const string TARGET_LANG = "EN-US";
-            
             var request = new RestRequest($"translate");
             request.AddParameter("auth_key", _authkey);
-            request.AddParameter("source_lang", SOURCE_LANG);
-            request.AddParameter("target_lang", TARGET_LANG);
+            request.AddParameter("source_lang", sourceLanguage);
+            request.AddParameter("target_lang", targetLanguage);
             //request.AddParameter("split_sentences", "nonewlines");
             foreach(var o in originals)
                 request.AddParameter("text", o);

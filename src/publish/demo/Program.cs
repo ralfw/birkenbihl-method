@@ -39,9 +39,26 @@ namespace demo
 
         public void Compile(string mdSourceFilepath, string targetFolderpath)
         {
+            const string bgDeepL = "BG";
+            const string frDeepL = "FR";
+            const string enDeepL = "EN-US";
+            const string bgGoogle = "bg";
+            const string frGoogle = "fr";
+            const string enGoogle = "en";
+            const string bgPlayht = "bg-BG-KalinaNeural";
+            const string frPlayht = "fr-FR-Standard-E";
+
+            var slDeepL = frDeepL;
+            var slGoogle = frGoogle;
+            var slPlayht = frPlayht;
+            
+            var tlDeepL = enDeepL;
+            var tlGoogle = enGoogle;
+            
+            
             // publication could be done on vercel oder durch eine github page.
             // create folder with...
-            //      text.html
+            //      index.html
             //      *.mp3
             if (Directory.Exists(targetFolderpath)) Directory.Delete(targetFolderpath, true);
             Directory.CreateDirectory(targetFolderpath);
@@ -57,7 +74,7 @@ namespace demo
             var paragraphTranslations = new List<string>();
             foreach (var paragraph in text.Paragraphs) {
                 Console.WriteLine($"    {paragraph.Text.Substring(0, Math.Min(10, paragraph.Text.Length))}...");
-                var translation = _paragraphTranslator.Translate(paragraph.Text);
+                var translation = _paragraphTranslator.Translate(paragraph.Text, slDeepL, tlDeepL);
                 paragraphTranslations.Add(translation);
             }
             
@@ -66,7 +83,7 @@ namespace demo
             var dictionary = new Dictionary<string, string>();
             foreach (var word in text.Index) {
                 Console.Write(".");
-                var translation = _wordTranslator.Translate(word);
+                var translation = _wordTranslator.Translate(word, slGoogle, tlGoogle);
                 dictionary.Add(word, translation);
             }
             Console.WriteLine();
@@ -75,7 +92,7 @@ namespace demo
             Console.WriteLine("Transcribing...");
             for(var p=0; p < text.Paragraphs.Length; p++)
             {
-                var txid = _transcriber.Convert(text.Paragraphs[p].Text);
+                var txid = _transcriber.Convert(text.Paragraphs[p].Text, slPlayht);
                 var tsc = _transcriber.WaitForTranscription(txid);
 
                 var mp3Filename = Path.Combine(targetFolderpath, $"p{p:000}.mp3");
@@ -85,6 +102,7 @@ namespace demo
             }
             Console.WriteLine();
 
+            // render a Birkenbihl text...
             // color names: https://htmlcolorcodes.com/
             Console.WriteLine("Rendering html...");
             var html = new StringBuilder();
@@ -100,10 +118,7 @@ namespace demo
                 // translated
                 html.AppendLine($"<div style=\"color:gray;background-color:PapayaWhip;\">{paragraphTranslations[i]}</div>");
 
-                
-                
                 // word by word interlinear paragraph
-                // monospaced font drumherum wickeln
                 // lines max 80chars wide
                 // min space between words: 1 char
                 // original: chunk from paragraph

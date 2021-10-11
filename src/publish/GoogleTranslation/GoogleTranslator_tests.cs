@@ -20,13 +20,16 @@ namespace GoogleTranslation
         {
             var sut = new GoogleTranslator();
             
-            var result = sut.Translate("Трябваше да е сигурен, че всичко е наред.");
+            var result = sut.Translate("Трябваше да е сигурен, че всичко е наред.", "bg", "en");
             _testOutputHelper.WriteLine(":::" + result);
             
-            result = sut.Translate("и");
+            result = sut.Translate("и", "bg", "en");
             _testOutputHelper.WriteLine(":::" + result);
             
-            result = sut.Translate("е");
+            result = sut.Translate("е", "bg", "en");
+            _testOutputHelper.WriteLine(":::" + result);
+            
+            result = sut.Translate("VOYAGE  AU  CENTRE DE  LA TERRE", "fr", "en");
             _testOutputHelper.WriteLine(":::" + result);
         }
     }

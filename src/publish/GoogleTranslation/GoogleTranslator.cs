@@ -17,12 +17,10 @@ namespace GoogleTranslation
         }
 
 
-        public string Translate(string original)
+        // bg, en, fr
+        public string Translate(string original, string sourceLanguage, string targetLanguage)
         {
-            const string SOURCE_LANG = "bg";
-            const string TARGET_LANG = "en";
-            
-            var request = new RestRequest($"single?client=dict-chrome-ex&sl={SOURCE_LANG}&tl={TARGET_LANG}&dt=t&q=" + Uri.EscapeUriString(original));
+            var request = new RestRequest($"single?client=dict-chrome-ex&sl={sourceLanguage}&tl={targetLanguage}&dt=t&q=" + Uri.EscapeUriString(original));
             // Add User-Agent header to avoid Captcha request.
             request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
             var resp = _client.Get(request);

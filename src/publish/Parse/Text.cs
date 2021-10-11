@@ -13,7 +13,8 @@ namespace Parse
                 public string Text { get; init; }
 
                 public string Word {
-                    get {
+                    get
+                    {
                         // skip non-word characters
                         var chars = new Queue<char>(Text.ToCharArray());
                         while (chars.Count() > 0 &&  IsWordCharacter(chars.Peek()) is false)
@@ -26,7 +27,12 @@ namespace Parse
 
                         return text.Replace("_", " ");
 
-                        bool IsWordCharacter(char c) => char.IsLetter(c) || c == '-' || c == '–' || c == '_';
+
+                        bool IsWordCharacter(char c) {
+                            const string ADDITIONAL_WORD_CHARS = "-'–_";
+                            
+                            return char.IsLetter(c) || ADDITIONAL_WORD_CHARS.IndexOf(c) >= 0;
+                        }
                     }
                 }
             }
