@@ -55,10 +55,10 @@ namespace Parse
             
             public Chunk[] Chunks {
                 get {
-                    return this.Text.Split(new[] {" ", "\n", "\r"},
-                            StringSplitOptions.TrimEntries | 
-                            StringSplitOptions.RemoveEmptyEntries)
-                        .Select(ch => new Chunk(ch)).ToArray();
+                    return this.Text.Split(new[] {" ", "\n", "\r", "\t"},
+                                            StringSplitOptions.TrimEntries | 
+                                            StringSplitOptions.RemoveEmptyEntries)
+                           .Select(ch => new Chunk(ch)).ToArray();
                 }
             }
         }

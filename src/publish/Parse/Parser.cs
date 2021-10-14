@@ -34,7 +34,7 @@ namespace Parse
                 else {
                     if (p.Length > 0)
                         p.AppendLine("");
-                    p.Append(line);
+                    p.Append(line.Replace("\t", " "));
                 }
             } while (true);
             if (p.Length > 0)

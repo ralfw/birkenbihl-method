@@ -39,19 +39,31 @@ namespace demo
 
         public void Compile(string mdSourceFilepath, string targetFolderpath)
         {
+            // languages supported: https://www.deepl.com/de/docs-api/translating-text/request/
             const string bgDeepL = "BG";
             const string frDeepL = "FR";
             const string enDeepL = "EN-US";
+            const string ltDeepL = "LT";
+            const string deDeepL = "DE";
+            
+            // languages supported: https://cloud.google.com/translate/docs/languages
             const string bgGoogle = "bg";
             const string frGoogle = "fr";
             const string enGoogle = "en";
+            const string ltGoogle = "lt";
+            const string deGoogle = "de";
+            
+            // voice reference file: https://github.com/playht/text-to-speech-api/blob/master/Voices.md
             const string bgPlayht = "bg-BG-KalinaNeural";
             const string frPlayht = "fr-FR-Standard-E";
+            const string ltPlayht = "lt-LT-OnaNeural";
 
-            var slDeepL = frDeepL;
-            var slGoogle = frGoogle;
-            var slPlayht = frPlayht;
+            // source lang
+            var slDeepL = ltDeepL;
+            var slGoogle = ltGoogle;
+            var slPlayht = ltPlayht;
             
+            // target lang
             var tlDeepL = enDeepL;
             var tlGoogle = enGoogle;
             
